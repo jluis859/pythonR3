@@ -1,0 +1,68 @@
+Setting up Python 3.12 and pythonnet
+
+1. Verify Python 3.12 is installed:
+   Run the following command to check the Python version:
+   python3.12 --version
+   Ensure it returns Python 3.12.x.
+
+2. Install pythonnet:
+   Use pip to install the latest version of pythonnet:
+   python3.12 -m pip install --upgrade pythonnet
+
+3. Verify Mono is installed and up-to-date:
+   Ensure you have Mono version 6.12 or higher:
+   mono --version
+   If Mono is outdated, download and install the latest version from:
+   https://www.mono-project.com/download/stable/
+
+4. Run the script:
+   Use Python 3.12 to execute the script:
+   python3.12 r3_writer.py
+
+Installation of Python 3.10 and setup for `pythonnet`
+
+1. Download Python 3.10:
+   - Go to https://www.python.org/downloads/release/python-31012/ and download the source code for Python 3.10.
+   - Extract the downloaded file:
+     tar -xvf Python-3.10.12.tgz
+     cd Python-3.10.12
+
+2. Install OpenSSL:
+   - Download the latest version from https://www.openssl.org/source/
+   - Extract, compile, and install OpenSSL:
+     tar -xvf openssl-3.4.0.tar.gz
+     cd openssl-3.4.0
+     ./config
+     make
+     sudo make install
+
+3. Configure and compile Python with OpenSSL:
+   - Clean previous configurations:
+     make clean
+   - Configure Python to use OpenSSL:
+     ./configure --with-openssl=/usr/local/ssl --enable-shared
+   - Compile and install Python:
+     make -j$(sysctl -n hw.ncpu)
+     sudo make altinstall
+
+4. Verify Python and OpenSSL:
+   - Open Python 3.10 and verify:
+     python3.10
+     Inside the interpreter, run:
+     import ssl
+     print(ssl.OPENSSL_VERSION)
+
+5. Install `pythonnet`:
+   - Use pip to install:
+     python3.10 -m pip install pythonnet
+
+6. Update Mono:
+   - Go to https://www.mono-project.com/download/stable/ and download the latest version.
+   - Install the `.pkg` file and verify:
+     mono --version
+
+7. Run your script:
+   - Run your script using Python 3.10:
+     python3.10 r3_writer.py
+
+

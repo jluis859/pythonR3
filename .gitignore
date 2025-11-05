@@ -1,0 +1,4 @@
+# Ignore output directory
+Output/
+Documents/
+Data_*

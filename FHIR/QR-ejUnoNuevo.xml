@@ -1,0 +1,427 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<QuestionnaireResponse xmlns:ns="http://hl7.org/fhir">
+  <id value="ejUnoNuevo"/>
+  <meta>
+    <profile value="https://paho.org/fhir/esavi/StructureDefinition/ESAVIQuestionnaireResponse"/>
+  </meta>
+  
+  <identifier>
+    <system value="http://ops.org/esavi/MX"/>
+    <value value="1550039300"/>
+  </identifier>
+  <questionnaire value="https://paho.org/fhir/esavi/Questionnaire/CuestionarioESAVI"/>
+  <status value="completed"/>
+  <authored value="2023-04-12T19:09:52.678Z"/>
+  <item>
+    <linkId value="datosNotificacionGeneral"/>
+    <item>
+      <linkId value="datosNotificacion"/>
+      <item>
+        <linkId value="paisOrigen-Reg"/>
+        <answer>
+          <valueCoding>
+            <system value="https://paho.org/fhir/esavi/CodeSystem/codPaisesCS"/>
+            <code value="MEX"/>
+          </valueCoding>
+        </answer>
+      </item>
+      <item>
+        <linkId value="nombreOrganizacionNotificadora"/>
+        <answer>
+          <valueString value="Subdrector Epiemyp, responsable del Sistema de ESAVI-Hospital General de México"/>
+        </answer>
+      </item>
+      <item>
+        <linkId value="codigoDireccionOrganizacion"/>
+        <answer>
+          <valueCoding>
+            <system value="https://paho.org/fhir/esavi/CodeSystem/DirOrgNotiCS"/>
+            <code value="MX_CS_07005"/>
+            <display value="Amatán (Municipio), Chiapas, Mexico"/>
+          </valueCoding>
+        </answer>
+      </item>
+      <item>
+        <linkId value="nombreDireccionOrganizacion"/>
+        <answer>
+          <valueString value="Amatán (Municipio), Chiapas, Mexico"/>
+        </answer>
+      </item>
+      <item>
+        <linkId value="codigoProfesionNotificador"/>
+        <answer>
+          <valueCoding>
+            <system value="https://paho.org/fhir/esavi/CodeSystem/ProfesionalNotificadorCS"/>
+            <code value="5"/>
+          </valueCoding>
+        </answer>
+      </item>
+    </item>
+    <item>
+      <linkId value="fechas"/>
+      <text value="Fechas Administrativas (al menos una fecha es necesaria)"/>
+      <item>
+        <linkId value="fechaConsulta"/>
+        <answer>
+          <valueDate value="2020-12-24"/>
+        </answer>
+      </item>
+      <item>
+        <linkId value="fechaNotificacion"/>
+        <answer>
+          <valueDate value="2020-12-24"/>
+        </answer>
+      </item>
+      <item>
+        <linkId value="fechaLlenadoFicha"/>
+        <answer>
+          <valueDate value="2020-12-24"/>
+        </answer>
+      </item>
+      <item>
+        <linkId value="fechaRepoNacional"/>
+        <answer>
+          <valueDate value="2020-12-25"/>
+        </answer>
+      </item>
+    </item>
+  </item>
+  <item>
+    <linkId value="datosIdVacunado"/>
+    <item>
+      <linkId value="datosPaciente"/>
+      <item>
+        <linkId value="numeroCaso"/>
+        <answer>
+          <valueString value="f9a9a518-7b6f-472a-bf28-9aad7a8eeb22"/>
+        </answer>
+      </item>
+      <item>
+        <linkId value="idPaciente"/>
+        <answer>
+          <valueString value="5f9f5ae5-e821-412d-8b58-9834a7a439c0"/>
+        </answer>
+      </item>
+      <item>
+        <linkId value="codigoResidenciaHabitual"/>
+        <answer>
+          <valueCoding>
+            <system value="https://paho.org/fhir/esavi/CodeSystem/DirOrgNotiCS"/>
+            <code value="MX_CS_07005"/>
+            <display value="Amatán (Municipio), Chiapas, Mexico"/>
+          </valueCoding>
+        </answer>
+      </item>
+      <item>
+        <linkId value="nombreResidenciaHabitual"/>
+        <answer>
+          <valueString value="Amatán (Municipio), Chiapas, Mexico"/>
+        </answer>
+      </item>
+      <item>
+        <linkId value="sexoPaciente"/>
+        <answer>
+          <valueCoding>
+            <system value="http://hl7.org/fhir/administrative-gender"/>
+            <code value="male"/>
+            <display value="Male"/>
+          </valueCoding>
+        </answer>
+      </item>
+      <item>
+        <linkId value="fechaNacimiento"/>
+        <answer>
+          <valueDate value="1985-02-02"/>
+        </answer>
+      </item>
+      <item>
+        <linkId value="etnia"/>
+        <answer>
+          <valueString value="Indígena"/>
+        </answer>
+      </item>
+    </item>
+  </item>
+  <item>
+    <linkId value="antecedentesMedicos"/>
+    <text value="Antecedentes médicos identificados por el paciente"/>
+    <item>
+      <linkId value="antecedentesEnfermedadesPrevias"/>
+      <item>
+        <linkId value="descripcionEnfPrevia"/>
+        <answer>
+          <valueString value="Alergia a Penicilina"/>
+        </answer>
+      </item>
+      <item>
+        <linkId value="codigoMedDRAEnfPrevia"/>
+        <answer>
+          <valueCoding>
+            <system value="https://www.meddra.org"/>
+            <code value="10034292"/>
+          </valueCoding>
+        </answer>
+      </item>
+      <item>
+        <linkId value="otrosCodigosEnfPrevia"/>
+        <answer>
+          <valueCoding>
+            <system value="http://snomed.info/sct"/>
+            <code value="91936005"/>
+          </valueCoding>
+        </answer>
+      </item>
+    </item>
+    <item>
+      <linkId value="antecedentesEventosAdversos"/>
+      <item>
+        <linkId value="antecedentesAdvSimilar"/>
+        <answer>
+          <valueCoding>
+            <system value="https://paho.org/fhir/esavi/CodeSystem/RespuestaSiNoNosabeCS"/>
+            <code value="1"/>
+            <display value="Si"/>
+          </valueCoding>
+        </answer>
+      </item>
+      <item>
+        <linkId value="alergiaMedicamentos"/>
+        <answer>
+          <valueCoding>
+            <system value="https://paho.org/fhir/esavi/CodeSystem/RespuestaSiNoNosabeCS"/>
+            <code value="1"/>
+            <display value="Si"/>
+          </valueCoding>
+        </answer>
+      </item>
+      <item>
+        <linkId value="alergiaVacunas"/>
+        <answer>
+          <valueCoding>
+            <system value="https://paho.org/fhir/esavi/CodeSystem/RespuestaSiNoNosabeCS"/>
+            <code value="1"/>
+            <display value="Si"/>
+          </valueCoding>
+        </answer>
+      </item>
+    </item>
+    <item>
+      <linkId value="antecedentesSarsCov2"/>
+      <item>
+        <linkId value="diagnosticoprevioSarsCov2"/>
+        <answer>
+          <valueCoding>
+            <system value="https://paho.org/fhir/esavi/CodeSystem/RespuestaSiNoNosabeCS"/>
+            <code value="2"/>
+            <display value="No"/>
+          </valueCoding>
+        </answer>
+      </item>
+    </item>
+  </item>
+  <item>
+    <linkId value="antecedentesFarmacosVacunas"/>
+    <item>
+      <linkId value="datosVacunas"/>
+      <text value="Datos de las vacunas administradas"/>
+      <item>
+        <linkId value="nombreVacuna"/>
+        <answer>
+          <valueString value="BioNTech"/>
+        </answer>
+      </item>
+      <item>
+        <linkId value="identificadorVacuna"/>
+        <answer>
+          <valueInteger value="121"/>
+        </answer>
+      </item>
+      <item>
+        <linkId value="nombreFabricante"/>
+        <answer>
+          <valueString value="Pfizer BioNTech"/>
+        </answer>
+      </item>
+      <item>
+        <linkId value="numeroDosisVacuna"/>
+        <text value="Numero ordinal de la dosis administrada"/>
+        <answer>
+          <valueInteger value="1"/>
+        </answer>
+      </item>
+      <item>
+        <linkId value="numeroLote"/>
+        <text value="Número del Lote de la Vacuna administrada"/>
+        <answer>
+          <valueString value="EK42412"/>
+        </answer>
+      </item>
+      <item>
+        <linkId value="fechaVencimientoVacuna"/>
+        <answer>
+          <valueDate value="2021-01-04"/>
+        </answer>
+      </item>
+      <item>
+        <linkId value="numeroLoteDiluyente"/>
+        <answer>
+          <valueString value="R20J17"/>
+        </answer>
+      </item>
+      <item>
+        <linkId value="fechaVencimientoDiluyente"/>
+        <answer>
+          <valueDate value="2022-06-01"/>
+        </answer>
+      </item>
+      <item>
+        <linkId value="nombreVacunatorio"/>
+        <answer>
+          <valueString value="Hospital General de México"/>
+        </answer>
+      </item>
+      <item>
+        <linkId value="fechaVacunacion"/>
+        <answer>
+          <valueDate value="2020-12-24"/>
+        </answer>
+      </item>
+      <item>
+        <linkId value="codigoDireccionVacunatorio"/>
+        <answer>
+          <valueCoding>
+            <system value="https://paho.org/fhir/esavi/CodeSystem/DirOrgNotiCS"/>
+            <code value="MX_CS_07005"/>
+            <display value="Amatán (Municipio), Chiapas, Mexico"/>
+          </valueCoding>
+        </answer>
+      </item>
+      <item>
+        <linkId value="nombreDireccionVacunatorio"/>
+        <answer>
+          <valueString value="Dr. Balmis 148, Doctores, Cuauhtémoc, 06720 Ciudad de México, CDMX, México"/>
+        </answer>
+      </item>
+    </item>
+  </item>
+  <item>
+    <linkId value="registroESAVI"/>
+    <item>
+      <linkId value="datosESAVI"/>
+      <item>
+        <linkId value="nombreESAVI"/>
+        <text value="Nombre del ESAVI"/>
+        <answer>
+          <valueString value="Anafilaxia"/>
+        </answer>
+      </item>
+      <item>
+        <linkId value="IdentificadorESAVI"/>
+        <answer>
+          <valueInteger value="1"/>
+        </answer>
+      </item>
+      <item>
+        <linkId value="codigoESAVIMedDRA"/>
+        <answer>
+          <valueCoding>
+            <system value="https://paho.org/fhir/esavi/ValueSet/EsaviMedDRAVS"/>
+            <code value="10002218"/>
+          </valueCoding>
+        </answer>
+      </item>
+      <item>
+        <linkId value="codigoESAVIOtro"/>
+        <answer>
+          <valueCoding>
+            <system value="http://snomed.info/sct"/>
+            <code value="39579001"/>
+          </valueCoding>
+        </answer>
+      </item>
+      <item>
+        <linkId value="fechaESAVI"/>
+        <answer>
+          <valueDate value="2020-12-24"/>
+        </answer>
+      </item>
+      <item>
+        <linkId value="horaESAVI"/>
+        <answer>
+          <valueTime value="08:40:00"/>
+        </answer>
+      </item>
+      <item>
+        <linkId value="descripcionESAVI"/>
+        <answer>
+          <valueString value="Anafilaxia post vacunación."/>
+        </answer>
+      </item>
+    </item>
+    <item>
+      <linkId value="gravedadESAVI"/>
+      <item>
+        <linkId value="tipoGravedad"/>
+        <answer>
+          <valueBoolean value="true"/>
+        </answer>
+      </item>
+      <item>
+        <linkId value="gravMuerte"/>
+        <answer>
+          <valueBoolean value="false"/>
+        </answer>
+      </item>
+      <item>
+        <linkId value="gravRiesgoVida"/>
+        <answer>
+          <valueBoolean value="true"/>
+        </answer>
+      </item>
+      <item>
+        <linkId value="gravDiscapacidad"/>
+        <answer>
+          <valueBoolean value="false"/>
+        </answer>
+      </item>
+      <item>
+        <linkId value="gravHospitalizacion"/>
+        <answer>
+          <valueBoolean value="false"/>
+        </answer>
+      </item>
+      <item>
+        <linkId value="gravAnomaliaCongenita"/>
+        <answer>
+          <valueBoolean value="false"/>
+        </answer>
+      </item>
+      <item>
+        <linkId value="otrosEventosImportantes"/>
+        <answer>
+          <valueBoolean value="false"/>
+        </answer>
+      </item>
+    </item>
+    <item>
+      <linkId value="desenlaceESAVI"/>
+      <item>
+        <linkId value="codDesenlaceESAVI"/>
+        <answer>
+          <valueCoding>
+            <system value="https://paho.org/fhir/esavi/CodeSystem/ClasificacionDesenlaceCS"/>
+            <code value="1"/>
+            <display value="Recuperado Completamente"/>
+          </valueCoding>
+        </answer>
+      </item>
+      <item>
+        <linkId value="fechaInicioInvestigacion"/>
+        <answer>
+          <valueDate value="2020-12-25"/>
+        </answer>
+      </item>
+    </item>
+  </item>
+</QuestionnaireResponse>

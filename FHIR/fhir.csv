@@ -1,0 +1,142 @@
+﻿LinkID,Text,Cardinality,Type,Description & Constraintsdoco
+.. OPSQuestionarioESAVI,,,Questionnaire,https://paho.org/fhir/esavi/Questionnaire/CuestionarioESAVI#0.2.0
+... datosNotificacionGeneral,Datos Administrativos de la Notificación,1..1,group,
+.... datosNotificacion,Datos de quién y donde se realiza la notificación,1..1,group,
+..... paisOrigen-Reg,País en donde se originó el Registro,1..1,choice,Value Set: Códigos de Países
+..... nombreOrganizacionNotificadora,Nombre de la institución del nivel local que realiza la notificación primaria.,1..1,string,
+..... codigoDireccionOrganizacion,Código del Nivel Geográfico Subnacional de la Ubicación de la Institución que Notifica,0..1,choice,Value Set: Códigos PAHO para Direcciones
+..... nombreDireccionOrganizacion,Nombre del Nivel Geográfico Subnacional de la Ubicación de la Institución que Notifica,1..1,string,
+..... codigoProfesionNotificador,Codigo de la profesión del notificador,0..1,choice,Value Set: Tipo de Profesional Notificador
+.... fechas,Fechas Administrativas (al menos una fecha es necesaria),1..1,group,
+..... fechaConsulta,Fecha de la primera consulta al servicio de salud por causa del ESAVI,0..1,date,
+..... fechaNotificacion,Fecha en la que el sistema de vigilancia oficialmente se entera de la ocurrencia del evento.,1..1,date,
+..... fechaLlenadoFicha,"Fecha en la que el notificador finaliza el llenado de la ficha de notificación (si la ficha es electrónica, es la misma que fechaNotificacion)",0..1,date,
+..... fechaRepoNacional,"Fecha registrada de llegada de la notificación a la base de datos del nivel nacional (si la ficha es electrónica, es la misma que fechaNotificacion)",0..1,date,
+... datosIdVacunado,Datos Demográficos de Vacunado que ha generado ESAVI,1..1,group,
+.... datosPaciente,Datos del Vacunado,1..1,group,
+..... numeroCaso,UUID que identifica el caso o notificación. Una persona puede tener más de una notificación.,1..1,string,
+..... idPaciente,UUID de identificación de la persona vacunada/afectada por el ESAVI,1..1,string,
+..... codigoResidenciaHabitual,Codigo Nivel Geográfico Subnacional de la Residencia Habitual de la Persona afectada por el ESAVI,0..1,choice,Value Set: Códigos PAHO para Direcciones
+..... nombreResidenciaHabitual,Nombre Nivel Geográfico Subnacional de la Residencia Habitual de la Persona afectada por el ESAVI,0..1,string,
+..... sexoPaciente,Sexo del vacunado.,1..1,choice,Value Set: AdministrativeGender
+..... fechaNacimiento,Fecha de nacimiento del vacunado,1..1,date,
+..... etnia,Nombre de la etnia con la que se identifica el vacunado,0..1,string,
+... antecedentesMedicos,Antecedentes médicos identificados por el paciente,0..1,group,
+.... ensayoClinico,ensayoClinico,0..1,group,
+..... ensayoClinicoCovid19,Consulta si participó en algún ensayo clínico para COVID-19,0..1,boolean,
+.... antecedentesEnfermedadesPrevias,Antecedentes enfermedades previas,0..*,group,
+..... descripcionEnfPrevia,"Descripción de los problemas de salud previos en la persona afectada por el ESAVI con énfasis en comorbilidades o enfermedades concomitantes al evento adverso, eventos previos similares y eventos médicos relevantes para el evento de salud actual (si la enfermedad está codificada, es la descripción correspondiente al código).",1..1,string,
+..... codigoMedDRAEnfPrevia,Código MedDRA del antecedente médico,0..1,choice,Value Set: Códigos de MedDRA para representar enfermedades previas en un ESAVI-PAHO
+..... otrosCodigosEnfPrevia,Código CIE-10/CIE-11/SNOMED del antecedente médico,0..1,choice,Value Set: Enfermedades previas en un ESAVI-PAHO
+.... antecedentesEventosAdversos,Declaración de existencia de eventos adversos previos,0..1,group,
+..... antecedentesAdvSimilar,Antecedente de eventos adversos similares al actual,0..1,choice,Value Set: Respuestas Simples
+..... alergiaMedicamentos,Antecedente de reacciones alérgicas a medicamentos,0..1,choice,Value Set: Respuestas Simples
+..... alergiaVacunas,Antecedente de reacciones alérgicas a otras vacunas,0..1,choice,Value Set: Respuestas Simples
+.... antecedentesSarsCov2,Antecedente de diagnóstico de infección por SARS-CoV-2,0..*,group,
+..... diagnosticoprevioSarsCov2,Antecedente de diagnóstico de infección por SARS-CoV-2 (Si/No/No Sabe),1..1,choice,Value Set: Respuestas Simples
+..... asintomaticoSars,Diagnóstico de Covid-19 sin síntomas (Si/No/No Sabe),0..1,choice,Value Set: Respuestas Simples
+..... fechaSintomasCovid19,Fecha en que comenzó el primer signo y/o síntoma de COVID-19.,0..1,dateTime,
+..... tipoConfirmacionCovid19,Tipo de confirmación de diagnóstico COVID-19,0..1,choice,Value Set: Modos Confirmación Infección COVID-19
+..... fechaTomaMuestraCovid19,Fecha en la cual se tomó la muestra para examen de COVID-19,0..1,date,
+.... pacienteEmbarazada,Estado de embarazo,0..1,group,Enable When: sexoPaciente =
+..... embarazadaMomentoVacuna,Estaba embarazada al momento de la vacuna?,0..1,choice,Value Set: Respuestas Simples
+..... embarazadaMomentoESAVI,Estaba embarazada al momento del ESAVI?,0..1,choice,Value Set: Respuestas Simples
+..... fechaUltimaMenstruacion,Fecha de la última menstruación de la Paciente,0..1,date,Enable When:
+,,,,embarazadaMomentoVacuna =
+,,,,embarazadaMomentoESAVI =
+..... fechaProbableParto,"Fecha del parto, o fecha probable del parto (calculada o indicada por la persona afectada por el ESAVI)",0..1,date,Enable When:
+,,,,embarazadaMomentoVacuna =
+,,,,embarazadaMomentoESAVI =
+..... edadGestacional,Edad gestacional actual si cursa embarazo o al momento del parto del embrazo mas reciente,0..1,integer,Enable When:
+,,,,embarazadaMomentoVacuna =
+,,,,embarazadaMomentoESAVI =
+..... monitoreoPosteriorVacuna,Respuesta correspondiente a la consulta sobre si se monitoreó al paciente una vez vacunada,1..1,choice,Enable When: embarazadaMomentoVacuna =
+,,,,Value Set: Respuestas Simples
+... antecedentesFarmacosVacunas,Antecedentes Farmacológicos,1..1,group,
+.... medicamento,Antecedentes de medicamentos que el paciente consume al momento del ESAVI,0..*,group,
+..... nombreMedicamento,"Nombre del medicamento consumido de manera concomitante con la vacuna o relevante para el ESAVI, en texto libre (si está codificado, es la descripción del código)",1..1,string,
+..... sistemaDeCodificacionParaNombreNormalizadoMedicamento,Sistema de codificacion,0..1,choice,Value Set: Sistemas De Codificacion
+..... nombreNormalizadoMedicamento,Nombre del medicamento según lo reporta el notificador. Puede incluir nombre normalizado si el país no incluye un campo en el que se registre en texto libre el nombre del medicamento.,0..1,string,
+..... codigoMedicamento,Código WHODrug/SCT/CIE-11/ATC del medicamento consumido por el paciente,0..1,choice,Value Set: Codigo Medicamento
+..... nombreFormaFarmaceutica,Nombre de la forma farmaceutica del medicamento,0..1,string,
+..... codigoFormaFarmaceutica,Código de la forma farmaceutica del medicamento,0..1,choice,Value Set: Identificación Formas Farmacéuticas
+..... nombreViaAdministracion,Nombre via de administración del medicamento,0..1,string,
+..... codigoViaAdministracion,Código Via administración del medicamento,0..1,choice,Value Set: Vías de Administración de Medicamentos
+.... datosVacunas,Datos de las vacunas administradas,1..*,group,
+..... nombreVacuna,Nombre de la vacuna administrada,1..1,string,
+..... sistemaDeCodificacionParaNombreNormalizadoVacuna,Sistema de codificacion,0..1,choice,Value Set: Sistemas De Codificacion
+..... nombreNormalizadoVacuna,Nombre de la vacuna según lo reporta el notificador. Puede incluir nombre normalizado si el país no incluye un campo en el que se registre en texto libre el nombre de la vacuna,0..1,string,
+..... identificadorVacuna,Identificador correlativo de la vacuna útil para referirse a la vacuna registrada en otras secciones de la guía.,1..1,integer,
+..... codigoVacunaWHODrug,Código WHODrug de la vacuna,0..1,choice,Value Set: Codigo WHODrug de la vacuna
+..... codigoVacunaOtro,Código no WHODrug de la Vacuna,0..1,choice,Value Set: Código no WHODrug de la Vacuna
+..... nombreFabricante,Nombre del fabricante o titular del registro sanitario según como lo haya registrado el notificador,0..1,string,
+..... codigoFabricanteWHODrug,Nombre del fabricante o titular del registro sanitario registrado en algún estándar farmacéutico del país. Si hay más de uno se prefiere WHO Drug.,0..1,choice,Value Set: Fabricantes Vacuna
+..... numeroDosisVacuna,Numero ordinal de la dosis administrada,1..1,integer,
+..... numeroLote,Número del Lote de la Vacuna administrada,0..1,string,
+..... fechaVencimientoVacuna,Fecha de Vencimiento de vacuna,0..1,date,
+..... nombreDiluyenteVacuna,Nombre del Diluyente de la Vacuna,0..1,string,
+..... numeroLoteDiluyente,Numero del lote del diluyente de la vacuna,0..1,string,
+..... fechaVencimientoDiluyente,Fecha de vencimiento del diluyente de la vacuna,0..1,date,
+..... nombreVacunatorio,Nombre del vacunatorio,0..1,string,
+..... fechaVacunacion,Fecha de vacunación,0..1,date,
+..... horaVacunacion,Hora de vacunación,0..1,time,
+..... codigoDireccionVacunatorio,Código del nivel geográfico subnacional de la ubicación de la institución de salud en la que se administró la vacuna,0..1,choice,Value Set: Códigos PAHO para Direcciones
+..... nombreDireccionVacunatorio,Dirección completa de la institución en la que se administró la vacuna,0..1,string,
+..... codigoMecanismoVerificacion,Código del mecanismo de verificación de vacuna colocada,0..1,choice,Value Set: Modos Verificación Vacuna Previa
+..... nombreOtroMecanismoVerificacion,Descripción de otro mecanismo no considerado en los códigos,0..1,string,
+..... fechaReconstitucionVacuna,Fecha en la cual se reconstituyó la vacuna registrada,0..1,date,
+..... horaReconstitucionVacuna,Hora en la cual se reconstituyó la vacuna registrada,0..1,time,
+... registroESAVI,Registro de ESAVI desarrollado por el vacunado,1..1,group,
+.... datosESAVI,Información del ESAVI y de su clasificación según gravedad,1..*,group,
+..... nombreESAVI,Nombre del ESAVI,1..1,string,
+..... IdentificadorESAVI,Identificador correlativo del ESAVI útil para referirse al evento registrado en otras secciones de la guía,1..1,integer,
+..... codigoESAVIMedDRA,Código MedDRA del Evento Adverso notificado,0..1,choice,Value Set: Código MedDRA del Evento Adverso notificado
+..... codigoESAVIOtro,Código no MedDRA del evento adverso ocurrido posterior a la vacunación,0..1,choice,Value Set: Otros Códigos Evento Adverso
+..... fechaESAVI,Fecha de inicio del ESAVI referido por el paciente o identificado por el médico,1..1,date,
+..... horaESAVI,Hora de inicio del ESAVI referido por el paciente o identificado por el médico,0..1,time,
+..... descripcionESAVI,Descripción narrativa del ESAVI,1..1,string,
+.... ESAVIDuranteEmbarazo,Datos relacionados con condiciones médicas ocurridas durante el embarazo en el que se recibió la vacuna y/o ocurrió el ESAVI.,0..*,group,Enable When: embarazadaMomentoESAVI =
+..... codigoTipoComplicacionESAVI,Código tipo complicacion del embarazo posterior a la administración de vacuna,1..1,choice,Value Set: Complicaciones Embarazo
+..... nombreComplicacionEmbarazoESAVI,Descripción de la Complicación,1..1,string,
+..... codigoMedDRAComplicacionEmbarazoESAVI,Código MedDRA de la complicación del embarazo,0..1,choice,Value Set: Códigos MEDDRA Complicaciones en Embarazo ESAVI
+..... otrosCodigosComplicacionEmbarazoESAVI,Código SNOMED-CT/CIE-10/CIE-11 de la complicación del embarazo,0..1,choice,Value Set: Otros Códigos Complicaciones en Embarazo ESAVI
+.... gravedadESAVI,Determinación del estado de gravedad del ESAVI,1..1,group,
+..... tipoGravedad,¿ESAVI Grave?,1..1,boolean,
+..... gravMuerte,Muerte,0..1,boolean,Enable When: tipoGravedad =
+..... gravRiesgoVida,Amenaza la vida al momento de la detección del ESAVI,0..1,boolean,Enable When: tipoGravedad =
+..... gravDiscapacidad,Genera discapacidad severa o permanente al momento de la detección,0..1,boolean,Enable When: tipoGravedad =
+..... gravHospitalizacion,Hospitalización o prolongación de la misma,0..1,boolean,Enable When: tipoGravedad =
+..... gravAnomaliaCongenita,Anomalía congénita,0..1,boolean,Enable When: tipoGravedad =
+..... gravAborto,Aborto,0..1,boolean,Enable When:
+,,,,embarazadaMomentoVacuna =
+,,,,embarazadaMomentoESAVI =
+..... gravMuerteFetal,Muerte fetal,0..1,boolean,Enable When:
+,,,,embarazadaMomentoVacuna =
+,,,,embarazadaMomentoESAVI =
+..... otrosEventosImportantes,Otros Eventos considerados Médicamente Importantes,0..1,boolean,Enable When: tipoGravedad =
+..... otrosEventosImportantesTx,Descripción de Otros Eventos medicamente importantes,0..*,string,Enable When: otrosEventosImportantes =
+.... desenlaceESAVI,Desenlace ESAVI,1..1,group,
+..... codDesenlaceESAVI,Código Desenlace ESAVI,1..1,choice,Value Set: Desenlaces Tras ESAVI
+..... fechaMuerte,Fecha de muerte producida por posible ESAVI,0..1,date,Enable When: gravMuerte =
+..... autopsia,Determinación si hubo o no Autopsia,0..1,choice,Enable When: gravMuerte =
+,,,,Value Set: Respuestas Simples
+..... fechaNotificaMuerte,Fecha en la cual se notifico la muerte del paciente al registro nacional,0..1,date,Enable When: gravMuerte =
+..... fechaNotificaMuerteFetal,Fecha en la cual se notifico la muerte del feto de paciente al registro nacional,0..1,date,Enable When: gravMuerteFetal =
+..... autopsiaFetal,Determinación si hubo o no Autopsia Fetal,0..1,choice,Enable When: gravMuerteFetal =
+,,,,Value Set: Respuestas Simples
+..... comentarios,Comentarios adicionales en cuanto al cuadro ESAVI,0..1,string,
+..... fechaInicioInvestigacion,Fecha en la cual se inicia investigación,0..1,date,
+.... causalidadESAVI,Información sobre la clasificación de causalidad,0..*,group,
+..... fechaCausalidadESAVI,Fecha de clasificación final del caso,0..1,date,
+..... sistemaClasfcausalidad,Método de clasificación de causalidad,1..1,choice,Value Set: Tipo de Método de clasificación de causalidad
+..... otroSistemaclasfcausalidad,Otro sistema de clasificación de causalidad,0..1,string,Enable When: sistemaClasfcausalidad =
+..... clasificacioncausaESAVI,Descripción de la clasificación de causalidad del ESAVI,0..1,string,
+..... clasificacionDeCausalidadWHOAEFI,Clasificación de causalidad según la metodología WHO AEFI,1..1,choice,Enable When: sistemaClasfcausalidad =
+,,,,Value Set: Clasificación de causalidad WHO-AEFI
+..... clasificacionDeCausalidadWHOUMC,Clasificación de causalidad según la metodología WHO UMC,1..1,choice,Enable When: sistemaClasfcausalidad =
+,,,,Value Set: Clasificación de causalidad WHO-UMC
+..... clasificacionDeCausalidadNaranjo,Clasificación de causalidad según la metodología Naranjo,1..1,choice,Enable When: sistemaClasfcausalidad =
+,,,,Value Set: Clasificación de causalidad Naranjo
+..... referenciaIdentificadorVacuna,Identificador correlativo de la vacuna,1..1,integer,
+..... referenciaIdentificadorESAVI,Identificador correlativo del ESAVI,1..1,integer,
+..... embarazoDuranteESAVI,Indicador si complicación materna o fetal son las que se reportan como ESAVI.,0..1,boolean,

@@ -1,3 +1,9 @@
+import pythonnet
+from pythonnet import load
+
+dotnet_root = "/opt/homebrew/opt/dotnet/libexec"
+load("coreclr", dotnet_root=dotnet_root)
+
 import clr
 import sys
 import uuid

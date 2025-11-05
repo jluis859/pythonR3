@@ -98,3 +98,9 @@ for prop in element_properties:
         print(f"    Properties of {inner_element_type}:")
         for inner_prop in inner_element_properties:
             print(f"      {inner_prop.Name}")
+
+
+properties = StudyIdentification_type.GetProperties() 
+print("StudyIdentification_type Properties:")
+for prop in properties:
+    print(f"  {prop.Name}")

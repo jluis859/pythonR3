@@ -58,7 +58,7 @@ for prop in properties:
 
 # Get all properties of Assessment_type
 properties = Assessment_type.GetProperties() 
-print("Assessment Properties:")
+print("\nAssessment Properties:")
 for prop in properties:
     print(f"  {prop.Name}")
 
@@ -81,7 +81,7 @@ if causalityAssessments_property.PropertyType.IsGenericType:
 # Get properties of CausalityAssessment
 element_type = causalityAssessments_property.PropertyType.GetGenericArguments()[0]
 element_properties = element_type.GetProperties()
-print("\nCausalityAssessment Properties:")
+print("\nCausalityAssessment Properties Total:")
 for prop in element_properties:
     print(f"  {prop.Name}")
     
@@ -100,7 +100,43 @@ for prop in element_properties:
             print(f"      {inner_prop.Name}")
 
 
+sendersDiagnoses_property = Assessment_type.GetProperty('SendersDiagnoses')
+print("\nSendersDiagnoses Property Details:")
+print(f"  PropertyType: {sendersDiagnoses_property.PropertyType}")
+
+# Try to get the element type if it's a collection
+if sendersDiagnoses_property.PropertyType.IsGenericType:
+    element_type = sendersDiagnoses_property.PropertyType.GetGenericArguments()[0]
+    print(f"  Element Type: {element_type}")
+    
+    # Get properties of the element type
+    element_properties = element_type.GetProperties()
+    print("\nSendersDiagnoses_property Properties:")
+    for prop in element_properties:
+        print(f"  {prop.Name}")
+
+# Get properties of CausalityAssessment
+element_type = sendersDiagnoses_property.PropertyType.GetGenericArguments()[0]
+element_properties = element_type.GetProperties()
+print("\nSendersDiagnoses_property Properties:")
+for prop in element_properties:
+    print(f"  {prop.Name}")
+    
+    # Get property type details
+    print(f"    Type: {prop.PropertyType}")
+    
+    # If it's a collection, get the element type
+    if prop.PropertyType.IsGenericType:
+        inner_element_type = prop.PropertyType.GetGenericArguments()[0]
+        print(f"    Element Type: {inner_element_type}")
+        
+        # Get properties of the inner element type
+        inner_element_properties = inner_element_type.GetProperties()
+        print(f"    Properties of {inner_element_type}:")
+        for inner_prop in inner_element_properties:
+            print(f"      {inner_prop.Name}")
+
 properties = StudyIdentification_type.GetProperties() 
-print("StudyIdentification_type Properties:")
+print("\nStudyIdentification_type Properties:")
 for prop in properties:
     print(f"  {prop.Name}")

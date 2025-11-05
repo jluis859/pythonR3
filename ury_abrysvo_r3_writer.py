@@ -209,7 +209,7 @@ for batch_index in range(BATCH_COUNT):
         narrative.CaseNarrativeIncludingClinicalCourseTherapeuticMeasuresOutcomeAndAdditionalRelevantInformation = narrative_text
 
         narrative.ReportersComment = reporter_text
-        narrative.SendersComment = ""
+        narrative.SendersComment = "Pendiente de evaluación de causalidad con expertos al final el período de estudio."
         caseSummaryAndReportersCommentsInNativeLanguage = CaseSummaryAndReportersCommentsInNativeLanguage()
         caseSummaryAndReportersCommentsInNativeLanguage.CaseSummaryAndReportersCommentsText = ""
         caseSummaryAndReportersCommentsInNativeLanguage.CaseSummaryAndReportersCommentsLanguage = ""

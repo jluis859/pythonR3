@@ -121,7 +121,8 @@ for batch_index in range(BATCH_COUNT):
     start_record = batch_index * MAX_RECORDS
     
     data_ury_list = []
-    with open('Data_URY/data_abrysvo_uy_5.csv', 'r', encoding='utf-8-sig') as file:
+    # with open('Data_URY/data_abrysvo_uy_5.csv', 'r', encoding='utf-8-sig') as file:
+    with open('Data_URY/data_abrysvo_uy.csv', 'r', encoding='utf-8-sig') as file:
         csv_reader = csv.DictReader(io.StringIO(file.read()))
         
         # Saltar registros hasta el inicio del lote actual
@@ -160,6 +161,7 @@ for batch_index in range(BATCH_COUNT):
 
         #print(data_ury.keys())
         case_number = data_ury['id'].split('-')[-1]
+        cedula = data_ury['nro_documento_recien_nacido'].split('-')[-1]
         identification = IdentificationOfTheCaseSafetyReport()
 
         #Sender information (there are more fields available)
@@ -239,6 +241,7 @@ for batch_index in range(BATCH_COUNT):
         # Patient characteristics
         patient_characteristics = PatientCharacteristics()
         patient_characteristics.PatientNameOrInitials = ""
+        patient_characteristics.PersonalIdentificationNumber = cedula
 
         # Edad
         patient_characteristics.DateOfBirth = data_ury['fecha_fin_gestacion']
@@ -255,7 +258,11 @@ for batch_index in range(BATCH_COUNT):
         patient_characteristics.Lactating = False
 
         # Peso
-        patient_characteristics.BodyWeight = str(float(data_ury['peso_recien_nacido']) / 1000)  # Convertir gramos a kilogramos
+        peso_rn_str = data_ury['peso_recien_nacido'].strip()
+        if peso_rn_str:
+            patient_characteristics.BodyWeight = str(float(peso_rn_str) / 1000)  # Convertir gramos a kilogramos
+        else:
+            patient_characteristics.BodyWeight = ""
         # patient_characteristics.Height = ""
 
         # Sexo
@@ -304,6 +311,7 @@ for batch_index in range(BATCH_COUNT):
             reaction_event.IdentificationOfTheCountryWhereTheReactionEventOccurred = country_code
             reaction_event.ReactionEventMedDRAVersion = meddra_version
             reaction_event.ReactionEventMedDRACode = meddra_code
+            
             
             #Seriousness information (Use either TrueOnly or the Nullflavor row)
             if results_in_death:
@@ -364,11 +372,13 @@ for batch_index in range(BATCH_COUNT):
         # Adds reactions to list
         reaction_events.Add(reaction_event)
 
-        def create_drug_information(drug_id, drug_name, who_drug_id, characterisation_role="1"):
+        def create_drug_information(drug_id, drug_name, who_drug_id, vaccine_date_vrs, characterisation_role="1"):
             drug_information = DrugInformation()    
             drug_information.DrugReferenceId = drug_id
             drug_information.CharacterisationOfDrugRole = characterisation_role # Sospechoso
             drug_information.MedicinalProductNameAsReportedByThePrimarySource = drug_name
+            drug_information.CountryOfAuthorisationApplication = "UY"
+            drug_information.NameOfHolderApplicant = "Pfizer"
             
             drug_information.MedicinalProductIdentifierWHODrugVersion = "20240830"
             drug_information.MedicinalProductIdentifierWHODrugProductId = who_drug_id
@@ -378,11 +388,22 @@ for batch_index in range(BATCH_COUNT):
             dosageInformation = DosageInformation()
             dosageInformation.Dose = ""
             dosageInformation.DoseUnit = ""
-            dosageInformation.DoseNumber = ""
-            dosageInformation.DosageText = ""
+            dosageInformation.DoseNumber = "1"
+            dosageInformation.DosageText = "Primera dosis de vacuna Abrysvo administrada a la madre durante el embarazo."
             dosageInformation.RouteOfAdministration = ""
             dosageInformations.Add(dosageInformation)
             drug_information.DosageInformations = dosageInformations
+            dosageInformation.DateAndTimeOfStartOfDrug = vaccine_date_vrs  # fecha_vacuna_vrs fecha vacuna
+
+            #10090260 indicacion inmunizacion materna
+            indicationForUseInCase = IndicationForUseInCase()
+            indicationForUseInCase.IndicationAsReportedByThePrimarySource = ""
+            indicationForUseInCase.IndicationMedDRAVersion = "27.0"
+            indicationForUseInCase.IndicationMedDRACode = 10090260
+            indicationForUseInCases = List[IndicationForUseInCase]()
+            indicationForUseInCases.Add(indicationForUseInCase)
+            drug_information.IndicationForUseInCases = indicationForUseInCases
+            #drug_information.ActionsTakenWithDrug = ""
             
             # Additional information on drug
             additionalInformationOnDrugs = List[AdditionalInformationOnDrug]()
@@ -405,7 +426,8 @@ for batch_index in range(BATCH_COUNT):
         drug_info = create_drug_information(
             drug_id=drug_id,
             drug_name=drug_name,
-            who_drug_id=who_drug_id
+            who_drug_id=who_drug_id,
+            vaccine_date_vrs=process_date(data_ury['fecha_vacuna_vrs']),  # fecha_vacuna_vrs fecha vacuna
         )
         
         drug_informations.Add(drug_info)

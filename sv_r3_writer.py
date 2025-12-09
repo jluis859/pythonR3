@@ -155,7 +155,7 @@ for data_sv in data_sv_list:
         identification.WorldWideUniqueCaseIdentificationNumber = "SV-SRS-" + case_number    
         identification.SendersCaseSafetyReportUniqueIdentifier = "SV-SRS-" + case_number 
     identification.FirstSenderOfThisCase = "1"                                          
-    identification.TypeOfReport = "1"       
+    identification.TypeOfReport = get_type_of_report(data_sv['Forma Detección'])      
     identification.DateReportWasFirstReceivedFromSource = fecha_reporte_msp                   
     identification.DateOfMostRecentInformationForThisReport = fecha_reporte_msp    
     identification.DateOfCreation = fecha_reporte_msp         
@@ -187,8 +187,21 @@ for data_sv in data_sv_list:
     # Narrative
     narrative = NarrativeCaseSummaryAndOtherInformation()
 
-    # Construir la narrativa incluyendo las semanas de gestación si están disponibles
-    narrative_text = data_sv['Descripción Clínica / Cuadro / evento Crr']
+    # Construir la narrativa
+    narrative_text = ""
+    if data_sv.get('Fecha Detección Caso'):
+        narrative_text += "Fecha detección: " + data_sv['Fecha Detección Caso']
+    
+    if data_sv.get('Descripción Clínica / Cuadro / evento Crr'):
+        if narrative_text:
+            narrative_text += " | "
+        narrative_text += "Cuadro: " + data_sv['Descripción Clínica / Cuadro / evento Crr']
+
+    if data_sv.get('Información Adicional Crr'):
+        if narrative_text:
+            narrative_text += " | "
+        narrative_text += "Info adicional: " + data_sv['Información Adicional Crr']
+
     reporter_text = ""
 
     narrative.CaseNarrativeIncludingClinicalCourseTherapeuticMeasuresOutcomeAndAdditionalRelevantInformation = narrative_text
@@ -296,7 +309,21 @@ for data_sv in data_sv_list:
         patient_characteristics.SexNullFlavor = NullFlavor.UNK
 
     # Medical history 
-    patient_characteristics.TextForRelevantMedicalHistoryAndConcurrentConditionsNotIncludingReactionEvent = data_sv['Antecedentes Médicos Crr'] + " | Reaccion otros medicamentos:" + data_sv['Reacción a otros medicamentos'] + " | Otras Reacciones: " + data_sv['Otras Reacciones Crr']
+    medical_history_text = ""
+    if data_sv.get('Antecedentes Médicos Crr'):
+        medical_history_text += data_sv['Antecedentes Médicos Crr']
+
+    if data_sv.get('Reacción a otros medicamentos'):
+        if medical_history_text:
+            medical_history_text += " | "
+        medical_history_text += "Reaccion otros medicamentos: " + data_sv['Reacción a otros medicamentos']
+
+    if data_sv.get('Otras Reacciones Crr'):
+        if medical_history_text:
+            medical_history_text += " | "
+        medical_history_text += "Otras Reacciones: " + data_sv['Otras Reacciones Crr']
+    
+    patient_characteristics.TextForRelevantMedicalHistoryAndConcurrentConditionsNotIncludingReactionEvent = medical_history_text
     #patient_characteristics.ConcomitantTherapies = TrueOnly(1, True)
 
     def create_reaction_event(reaction_id, reaction_text, meddra_code, fecha_evento, fecha_evento_fin = "",
@@ -406,8 +433,12 @@ for data_sv in data_sv_list:
                 other_medically_important_condition = True
             elif criterio == 'Amenaza de la Vida':
                 life_threatening = True
+            elif criterio == 'Anomalía Congénita':
+                congenital_anomaly_birth_defect = True
             elif criterio == 'Hospitalización/Prolongada':
                 caused_prolonged_hospitalisation = True
+            elif criterio == 'Muerte':
+                results_in_death = True
             elif criterio == 'Otra Condición Médica Importante':
                 other_medically_important_condition = True
         

@@ -40,7 +40,7 @@ def mapping_parameters(info):
 
 # Leer registros del CSV en lotes de 100
 MAX_RECORDS = 100
-TOTAL_RECORDS = 500
+TOTAL_RECORDS = 1100
 discarded_records = 0
 
 messageLog = []
@@ -121,9 +121,7 @@ for batch_index in range(BATCH_COUNT):
     start_record = batch_index * MAX_RECORDS
     
     data_ury_list = []
-    # with open('Data_URY/data_abrysvo_uy_5.csv', 'r', encoding='utf-8-sig') as file:
-    #with open('Data_URY/data_abrysvo_uy.csv', 'r', encoding='utf-8-sig') as file:
-    with open('Data_URY/data_abrysvo_p2_uy_5.csv', 'r', encoding='utf-8-sig') as file:
+    with open('Data_URY/errores_medicacion.csv', 'r', encoding='utf-8-sig') as file:
         csv_reader = csv.DictReader(io.StringIO(file.read()))
         
         # Saltar registros hasta el inicio del lote actual
@@ -149,8 +147,8 @@ for batch_index in range(BATCH_COUNT):
 
         data_ury = clean_sin_datos(data_ury)
 
-        fecha_reporte_msp = process_date("5/11/25")
-        fecha_evento = process_date(data_ury['fecha_fin_gestacion'])
+        fecha_reporte_msp = process_date("8/12/25")
+        fecha_evento = process_date(data_ury['Fecha del Error de Medicacion'])
 
         # Fill R3 model with data
         info = TransmissionIdentification(
@@ -161,8 +159,7 @@ for batch_index in range(BATCH_COUNT):
         )
 
         #print(data_ury.keys())
-        case_number = data_ury['id'].split('-')[-1]
-        cedula = data_ury['nro_documento_recien_nacido'].split('-')[-1]
+        case_number = data_ury['safety_id'].split('-')[-1]
         identification = IdentificationOfTheCaseSafetyReport()
 
         #Sender information (there are more fields available)
@@ -171,12 +168,10 @@ for batch_index in range(BATCH_COUNT):
         #identification.SendersCountryCode = "UY"                                            
 
         #Report identification
-        # identification.WorldWideUniqueCaseIdentificationNumber = "UY-MSP-TEST-" + case_number    
-        # identification.SendersCaseSafetyReportUniqueIdentifier = "UY-MSP-TEST-" + case_number    
-        identification.WorldWideUniqueCaseIdentificationNumber = data_ury['id']    
-        identification.SendersCaseSafetyReportUniqueIdentifier = data_ury['id']     
+        identification.WorldWideUniqueCaseIdentificationNumber = data_ury['safety_id']    
+        identification.SendersCaseSafetyReportUniqueIdentifier = data_ury['safety_id']     
         identification.FirstSenderOfThisCase = "1"                                          
-        identification.TypeOfReport = "2"       
+        identification.TypeOfReport = "1"       
         identification.DateReportWasFirstReceivedFromSource = fecha_reporte_msp                   
         identification.DateOfMostRecentInformationForThisReport = fecha_reporte_msp    
         identification.DateOfCreation = fecha_reporte_msp         
@@ -192,7 +187,7 @@ for batch_index in range(BATCH_COUNT):
         identification.NotificationDate = fecha_reporte_msp                                                
         identification.DateOfReport = fecha_reporte_msp         
         # Not working ReportTitle: Organizacion + "RAM/Error" + Medicamento Sospechoso                                                                 
-        identification.ReportTitle = "Vigilancia activa Abrysvo: Vinculado a " + data_ury['Evento adverso'] + " | " + data_ury['prestador']
+        identification.ReportTitle = "Error de " + data_ury['Tipo de error'] + " | " + data_ury['safety_id']
 
         # Other case identifiers
         othercaseIdentifier = OtherCaseIdentifiers()
@@ -205,14 +200,27 @@ for batch_index in range(BATCH_COUNT):
         # Narrative
         narrative = NarrativeCaseSummaryAndOtherInformation()
 
-        # Construir la narrativa incluyendo las semanas de gestación si están disponibles
-        narrative_text = "Reporte de estudio: Vigilancia de seguridad de la vacuna Abrysvo contra VRS en binomio Madre-Hijo"
+        # Construir la narrativa
+        narrative_text = ""
+        if data_ury.get('Tipo de error'):
+            narrative_text += "Tipo de error: " + data_ury['Tipo de error']
+        
+        if data_ury.get('Posibles causas identificadas'):
+            if narrative_text:
+                narrative_text += " | "
+            narrative_text += "Posible causa identificada: " + data_ury['Posibles causas identificadas']
+
+        if data_ury.get('Desenlace'):
+            if narrative_text:
+                narrative_text += " | "
+            narrative_text += "Desenlace: " + data_ury['Desenlace']
+        
         reporter_text = ""
 
         narrative.CaseNarrativeIncludingClinicalCourseTherapeuticMeasuresOutcomeAndAdditionalRelevantInformation = narrative_text
 
         narrative.ReportersComment = reporter_text
-        narrative.SendersComment = "Pendiente de evaluación de causalidad con expertos al final el período de estudio."
+        narrative.SendersComment = "Pendiente de evaluación de causalidad:" + data_ury['Comentario evaluacion']
         caseSummaryAndReportersCommentsInNativeLanguage = CaseSummaryAndReportersCommentsInNativeLanguage()
         caseSummaryAndReportersCommentsInNativeLanguage.CaseSummaryAndReportersCommentsText = ""
         caseSummaryAndReportersCommentsInNativeLanguage.CaseSummaryAndReportersCommentsLanguage = ""
@@ -222,11 +230,20 @@ for batch_index in range(BATCH_COUNT):
 
         #Primary Source
         primary_source = PrimarySourcesOfInformation()
-        primary_source.Qualification = "3"
+        
+        qualification = ""
+        tipo_emisor = data_ury.get('Tipo de emisor')
+        if tipo_emisor == 'Otro':
+            qualification = "3"
+        elif tipo_emisor == 'Profesional de la salud':
+            qualification = "2"
+        
+        primary_source.Qualification = qualification
+
         primary_source.PrimarySourceForRegulatoryPurposes = True
-        primary_source.ReportersOrganisation = data_ury['prestador']
-        primary_source.ReportersDepartment = data_ury['departamento_residencia_materno']
-        primary_source.ReportersStreet = data_ury['localidad_residencia_materno']
+        primary_source.ReportersOrganisation = data_ury['Notificador']
+        primary_source.ReportersDepartment = ""
+        primary_source.ReportersStreet = ""
         primary_source.ReportersCountryCode = "UY"
         primary_source.ReportersTelephone = ""
         primary_source.QualificationFreetext = ""
@@ -236,45 +253,51 @@ for batch_index in range(BATCH_COUNT):
         # Sender
         sender_info = InformationOnSenderOfCaseSafetyReport()
         sender_info.SendersOrganisation = "Ministerio de Salud Pública Uruguay"      
-        sender_info.SenderType = "2" # Autoridad regulatoria                                           
+        sender_info.SenderType = "3" # Profesional de la salud                                          
         sender_info.SendersCountryCode = "UY"   
 
         # Patient characteristics
         patient_characteristics = PatientCharacteristics()
-        patient_characteristics.PatientNameOrInitials = ""
-        patient_characteristics.PersonalIdentificationNumber = cedula
+        patient_characteristics.PatientNameOrInitials = data_ury['Iniciales']
+        patient_characteristics.PersonalIdentificationNumber = ""
 
         # Edad
-        patient_characteristics.DateOfBirth = data_ury['fecha_fin_gestacion']
-        # age, age_unit = get_age(data_ury['edad_madre'], 'a')
-        # patient_characteristics.AgeAtTimeOfOnsetOfReactionEvent = age
-        # patient_characteristics.AgeAtTimeOfOnsetOfReactionEventUnit = age_unit
-        # Embarazo
-        patient_characteristics.Pregnant = False
-        patient_characteristics.GestationPeriodWhenReactionEventWasObservedInTheFoetus = data_ury['semanas_gestacion_recien_nacido']
-        patient_characteristics.GestationPeriodWhenReactionEventWasObservedInTheFoetusUnit = "wk"
+        patient_characteristics.DateOfBirth = ""
         
-        patient_characteristics.PatientAgeGroupAsPerReporter = "1"
+        age_str = data_ury.get('Edad', '').strip()
+        if age_str and age_str.isdigit():
+            age, age_unit = get_age(age_str, data_ury.get('Unidad'))
+        else:
+            age, age_unit = "", ""
+            
+        patient_characteristics.AgeAtTimeOfOnsetOfReactionEvent = age
+        patient_characteristics.AgeAtTimeOfOnsetOfReactionEventUnit = age_unit
+        # Embarazo
+        # patient_characteristics.Pregnant = False
+        # patient_characteristics.GestationPeriodWhenReactionEventWasObservedInTheFoetus = ""
+        # patient_characteristics.GestationPeriodWhenReactionEventWasObservedInTheFoetusUnit = ""
+        
+        # patient_characteristics.PatientAgeGroupAsPerReporter = ""
 
-        patient_characteristics.Lactating = False
+        # patient_characteristics.Lactating = False
 
         # Peso
-        peso_rn_str = data_ury['peso_recien_nacido'].strip()
-        if peso_rn_str:
-            patient_characteristics.BodyWeight = str(float(peso_rn_str) / 1000)  # Convertir gramos a kilogramos
-        else:
-            patient_characteristics.BodyWeight = ""
+        #patient_characteristics.BodyWeight = ""
         # patient_characteristics.Height = ""
 
         # Sexo
-        patient_characteristics.Sex = get_sex(data_ury['sexo_rn'])
+        sexo = get_sex(data_ury.get('Sexo'))
+        if sexo:
+            patient_characteristics.Sex = sexo
+        else:
+            patient_characteristics.SexNullFlavor = NullFlavor.UNK
 
-        forAParentChildFoetusReportInformationConcerningParent = ForAParentChildFoetusReportInformationConcerningParent()
-        forAParentChildFoetusReportInformationConcerningParent.AgeOfParent = data_ury['edad_madre']
-        forAParentChildFoetusReportInformationConcerningParent.AgeOfParentUnit = "a"
-        forAParentChildFoetusReportInformationConcerningParent.SexOfParent = "2"
+        # forAParentChildFoetusReportInformationConcerningParent = ForAParentChildFoetusReportInformationConcerningParent()
+        # forAParentChildFoetusReportInformationConcerningParent.AgeOfParent = data_ury['edad_madre']
+        # forAParentChildFoetusReportInformationConcerningParent.AgeOfParentUnit = "a"
+        # forAParentChildFoetusReportInformationConcerningParent.SexOfParent = "2"
 
-        patient_characteristics.ForAParentChildFoetusReportInformationConcerningParent = forAParentChildFoetusReportInformationConcerningParent
+        # patient_characteristics.ForAParentChildFoetusReportInformationConcerningParent = forAParentChildFoetusReportInformationConcerningParent
 
         #patient_characteristics.TextForRelevantMedicalHistoryAndConcurrentConditionsNotIncludingReactionEvent = ":" +data_ury['fecha_fin_gestacion']
 
@@ -291,11 +314,11 @@ for batch_index in range(BATCH_COUNT):
         # SponsorStudyNumberNullFlavor
         # StudyTypeWhereReactionsEventsWereObserved
         study_identification = StudyIdentification()
-        study_identification.StudyName = "Reporte de estudio: Vigilancia de seguridad de la vacuna Abrysvo contra VRS en binomio Madre-Hijo"
+        # study_identification.StudyName = "Reporte de estudio: Vigilancia de seguridad de la vacuna Abrysvo contra VRS en binomio Madre-Hijo"
         #study_identification.StudyNameNullFlavor = NullFlavor.NI
         #study_identification.SponsorStudyNumber = data_ury['id'] 
         #study_identification.SponsorStudyNumberNullFlavor = NullFlavor.NI
-        study_identification.StudyTypeWhereReactionsEventsWereObserved = "3"
+        # study_identification.StudyTypeWhereReactionsEventsWereObserved = "3"
         #study_identification.StudyTypeWhereReactionsEventsWereObservedNullFlavor = NullFlavor.NI
 
         def create_reaction_event(reaction_id, reaction_text, meddra_code, fecha_evento, 
@@ -350,15 +373,10 @@ for batch_index in range(BATCH_COUNT):
         # Reaction (add all reactions to this list)
         reaction_events = List[ReactionEvent]()
 
-        meddra_code = ""
+        meddra_code = data_ury['meddra code']
 
-        if data_ury.get('Evento adverso', '').lower() == 'neonato prematuro':
-            meddra_code = '10003969'
-        else:
-            meddra_code = '10004958'
-            
         reaction_info = {
-                        'text': data_ury.get('Evento adverso', ''),
+                        'text': data_ury.get('meddra term', ''),
                         'code': int(meddra_code)
                     }
         
@@ -373,34 +391,36 @@ for batch_index in range(BATCH_COUNT):
         # Adds reactions to list
         reaction_events.Add(reaction_event)
 
-        def create_drug_information(drug_id, drug_name, who_drug_id, vaccine_date_vrs, characterisation_role="1"):
+        def create_drug_information(drug_id, drug_name, who_drug_id, dossage_text, pharmaceutical_dose_form="", characterisation_role="1"):
             drug_information = DrugInformation()    
             drug_information.DrugReferenceId = drug_id
             drug_information.CharacterisationOfDrugRole = characterisation_role # Sospechoso
             drug_information.MedicinalProductNameAsReportedByThePrimarySource = drug_name
             drug_information.CountryOfAuthorisationApplication = "UY"
-            drug_information.NameOfHolderApplicant = "Pfizer"
+            drug_information.NameOfHolderApplicant = ""
             
             drug_information.MedicinalProductIdentifierWHODrugVersion = "20240830"
-            drug_information.MedicinalProductIdentifierWHODrugProductId = who_drug_id
+            #drug_information.MedicinalProductIdentifierWHODrugProductId = who_drug_id
+            drug_information.MedicinalProductIdentifierWHODrugProductId = 3878715  # Placeholder value
 
             # Dose information
             dosageInformations = List[DosageInformation]()
             dosageInformation = DosageInformation()
             dosageInformation.Dose = ""
             dosageInformation.DoseUnit = ""
-            dosageInformation.DoseNumber = "1"
-            dosageInformation.DosageText = "Primera dosis de vacuna Abrysvo administrada a la madre durante el embarazo."
+            dosageInformation.DoseNumber = ""
+            dosageInformation.DosageText = dossage_text
+            dosageInformation.PharmaceuticalDoseForm = pharmaceutical_dose_form
             dosageInformation.RouteOfAdministration = ""
             dosageInformations.Add(dosageInformation)
             drug_information.DosageInformations = dosageInformations
-            dosageInformation.DateAndTimeOfStartOfDrug = vaccine_date_vrs  # fecha_vacuna_vrs fecha vacuna
+            dosageInformation.DateAndTimeOfStartOfDrug = "" 
 
             #10090260 indicacion inmunizacion materna
             indicationForUseInCase = IndicationForUseInCase()
             indicationForUseInCase.IndicationAsReportedByThePrimarySource = ""
             indicationForUseInCase.IndicationMedDRAVersion = "27.0"
-            indicationForUseInCase.IndicationMedDRACode = 10090260
+            #indicationForUseInCase.IndicationMedDRACode = ""
             indicationForUseInCases = List[IndicationForUseInCase]()
             indicationForUseInCases.Add(indicationForUseInCase)
             drug_information.IndicationForUseInCases = indicationForUseInCases
@@ -409,10 +429,10 @@ for batch_index in range(BATCH_COUNT):
             # Additional information on drug
             additionalInformationOnDrugs = List[AdditionalInformationOnDrug]()
             additionalInformationOnDrug = AdditionalInformationOnDrug()
-            additionalInformationOnDrug.AdditionalInformationOnDrugCoded = ""
+            additionalInformationOnDrug.AdditionalInformationOnDrugCoded = "7"
             additionalInformationOnDrugs.Add(additionalInformationOnDrug)
             drug_information.AdditionalInformationOnDrugs = additionalInformationOnDrugs
-            drug_information.AdditionalInformationOnDrug = ""
+            drug_information.AdditionalInformationOnDrug = data_ury.get('Accion tomada', '')
             
             return drug_information
 
@@ -420,19 +440,46 @@ for batch_index in range(BATCH_COUNT):
         drug_informations = List[DrugInformation]()
         
         drug_id = generate_guid()  # Genera un GUID único para cada medicamento
-        drug_name = "Abrysvo"
-        who_drug_id = 5810496 # WHO Drug ID para Abrysvo
+        drug_name = data_ury.get('Marca comercial erroneo', '')
+        if not drug_name:
+            drug_name = data_ury.get('Principio activo erroneo', '')
+        who_drug_id = data_ury['mpid erroneo'] # WHO Drug ID
+        dosage_text = data_ury['Dosis erroneo']
+        pharmaceutical_dose_form = data_ury.get('Forma Farmaceutica erroneo', '')
         
         # Crear el objeto DrugInformation y agregarlo a la lista
-        drug_info = create_drug_information(
+        drug_erroneo = create_drug_information(
             drug_id=drug_id,
             drug_name=drug_name,
             who_drug_id=who_drug_id,
-            vaccine_date_vrs=process_date(data_ury['fecha_vacuna_vrs']),  # fecha_vacuna_vrs fecha vacuna
+            dossage_text=dosage_text,
+            pharmaceutical_dose_form=pharmaceutical_dose_form,
+            characterisation_role="1"
+        )
+
+        drug_informations.Add(drug_erroneo)
+        print(f"Medicamento erroneo agregado: {drug_name}")
+
+        drug_id = generate_guid()  # Genera un GUID único para cada medicamento
+        drug_name = data_ury['Marca comercial correcto']
+        if not drug_name:
+            drug_name = data_ury.get('Principio activo correcto', '')
+        who_drug_id = data_ury['mpid correcto'] # WHO Drug ID
+        dosage_text = data_ury['Dosis correcto']
+        pharmaceutical_dose_form = data_ury.get('Forma Farmaceutica correcto', '')
+        
+        # Crear el objeto DrugInformation y agregarlo a la lista
+        drug_correcto = create_drug_information(
+            drug_id=drug_id,
+            drug_name=drug_name,
+            who_drug_id=who_drug_id,
+            dossage_text=dosage_text,
+            pharmaceutical_dose_form=pharmaceutical_dose_form,
+            characterisation_role="4"
         )
         
-        drug_informations.Add(drug_info)
-        print(f"Medicamento agregado: {drug_name}")
+        drug_informations.Add(drug_correcto)
+        print(f"Medicamento correcto agregado: {drug_name}")
 
         
 
@@ -495,7 +542,7 @@ for batch_index in range(BATCH_COUNT):
         icsr_list.Add(icsrWithIncludedDocuments)
 
     # Fuera del bucle, escribir todos los ICSRs
-    stream = FileStream(f"Output/uruguay/ury_output_abrysvo_p2_{batch_index+1}.xml", FileMode.Create, FileAccess.Write)
+    stream = FileStream(f"Output/uruguay/ury_output_error_med_{batch_index+1}.xml", FileMode.Create, FileAccess.Write)
     
     message = ""
     # Write E2B R3 XML to the file
@@ -519,7 +566,7 @@ message += f"\nTotal de ICSRs en la lista: {sum(icsr_list_lengths)}"
 print(message)
 messageLog.append(message)
 
-with open('Output/uruguay/messageLog_abrysvo.txt', 'w', newline='') as csvfile:
+with open('Output/uruguay/messageLog_error_med.txt', 'w', newline='') as csvfile:
     writer = csv.writer(csvfile)
     writer.writerow(['Message Log'])  # Cabecera del archivo CSV
     for message in messageLog:

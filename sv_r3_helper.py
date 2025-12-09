@@ -112,7 +112,16 @@ def get_qualification(qualification):
     elif qualification.lower() == 'referente farmacovigilancia':
         return "3"
     else:
-        return ""
+        return "3"
+    
+def get_type_of_report(type_of_report):
+    if type_of_report.lower() == 'consulta espontánea':
+        return "1"
+    elif type_of_report.lower() == 'reporte de estudio':
+        return "2"
+    else:
+        return "3"
+    
 def get_age(years, months, weeks, days, hours):
     """
     Determines the age value and unit based on multiple age fields.

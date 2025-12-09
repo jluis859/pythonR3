@@ -57,28 +57,33 @@ def process_date(date_string):
         if month_year_result:
             return month_year_result
             
-        # Intentar primero con formato dd/mm/yy
+        # Intentar con formato dd/mm/yyyy
         try:
-            fecha_obj = datetime.strptime(date_string, "%d/%m/%y")
+            fecha_obj = datetime.strptime(date_string, "%d/%m/%Y")
             return fecha_obj.strftime("%Y%m%d")
         except ValueError:
-            # Si falla, intentar con formato yyyy-mm-dd
+            # Intentar con formato dd/mm/yy
             try:
-                fecha_obj = datetime.strptime(date_string, "%Y-%m-%d")
+                fecha_obj = datetime.strptime(date_string, "%d/%m/%y")
                 return fecha_obj.strftime("%Y%m%d")
             except ValueError:
-                # Si falla, intentar con formato mm/yy (para fechas como 00/01/09)
+                # Si falla, intentar con formato yyyy-mm-dd
                 try:
-                    if date_string.count('/') == 2 and date_string.startswith('00/'):
-                        # Extraer solo la parte mm/yy
-                        mm_yy = date_string[3:]
-                        fecha_obj = datetime.strptime(mm_yy, "%m/%y")
-                        return fecha_obj.strftime("%Y%m00")  # Día como 00
+                    fecha_obj = datetime.strptime(date_string, "%Y-%m-%d")
+                    return fecha_obj.strftime("%Y%m%d")
                 except ValueError:
-                    pass
-                    
-                # Si todas las conversiones fallan, lanzar ValueError
-                raise ValueError(f"Formato de fecha no reconocido: {date_string}")
+                    # Si falla, intentar con formato mm/yy (para fechas como 00/01/09)
+                    try:
+                        if date_string.count('/') == 2 and date_string.startswith('00/'):
+                            # Extraer solo la parte mm/yy
+                            mm_yy = date_string[3:]
+                            fecha_obj = datetime.strptime(mm_yy, "%m/%y")
+                            return fecha_obj.strftime("%Y%m00")  # Día como 00
+                    except ValueError:
+                        pass
+                        
+                    # Si todas las conversiones fallan, lanzar ValueError
+                    raise ValueError(f"Formato de fecha no reconocido: {date_string}")
     except ValueError:
         print(f"Error: La fecha '{date_string}' no es válida.")
         return ""
@@ -139,7 +144,7 @@ def get_age(age, unit):
     age = str(age).strip()
     unit = unit.strip().lower()
 
-    if unit in ['a', 'años']:
+    if unit in ['a', 'años', 'año', 'anos', 'ano']:
         return age, "a"
     elif unit in ['m', 'meses']:
         return age, "mo"

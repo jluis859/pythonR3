@@ -167,8 +167,8 @@ for record in json_data:
 
 # Define the mapping for the 'vacuna' column
 vacuna_mapping = {
-    '1': '5955740', #R DPP® (BioManguinhos)
-    '2': '222', #Stamaril ® (Sanofi Pasteur)
+    '1': '5955740', #R DPP® (BioManguinhos) 
+    '2': '4232902', #Stamaril ® (Sanofi Pasteur)
     '3': '333' #SinSaVac™ Chumakov FSC
 }
 

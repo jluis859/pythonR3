@@ -121,7 +121,7 @@ for batch_index in range(BATCH_COUNT):
     start_record = batch_index * MAX_RECORDS
     
     data_ury_list = []
-    with open('Data_URY/errores_medicacion.csv', 'r', encoding='utf-8-sig') as file:
+    with open('Data_URY/errores_medicacion_procesado.csv', 'r', encoding='utf-8-sig') as file:
         csv_reader = csv.DictReader(io.StringIO(file.read()))
         
         # Saltar registros hasta el inicio del lote actual
@@ -391,7 +391,7 @@ for batch_index in range(BATCH_COUNT):
         # Adds reactions to list
         reaction_events.Add(reaction_event)
 
-        def create_drug_information(drug_id, drug_name, who_drug_id, dossage_text, pharmaceutical_dose_form="", characterisation_role="1"):
+        def create_drug_information(drug_id, drug_name, who_drug_id, dossage_text, pharmaceutical_dose_form="", characterisation_role="1", accion_tomada="", alerta_text=""):
             drug_information = DrugInformation()    
             drug_information.DrugReferenceId = drug_id
             drug_information.CharacterisationOfDrugRole = characterisation_role # Sospechoso
@@ -400,8 +400,15 @@ for batch_index in range(BATCH_COUNT):
             drug_information.NameOfHolderApplicant = ""
             
             drug_information.MedicinalProductIdentifierWHODrugVersion = "20240830"
-            #drug_information.MedicinalProductIdentifierWHODrugProductId = who_drug_id
-            drug_information.MedicinalProductIdentifierWHODrugProductId = 3878715  # Placeholder value
+            
+            # Asignar el ID del producto de WHO Drug con la lógica corregida
+            try:
+                # Primero convertir a float para manejar strings como "1901624.0",
+                # luego a int para truncar la parte decimal.
+                drug_information.MedicinalProductIdentifierWHODrugProductId = int(float(who_drug_id))
+            except (ValueError, TypeError):
+                # Si la conversión falla (valor vacío, NaN, texto), usar el valor por defecto.
+                drug_information.MedicinalProductIdentifierWHODrugProductId = 3878715
 
             # Dose information
             dosageInformations = List[DosageInformation]()
@@ -432,7 +439,15 @@ for batch_index in range(BATCH_COUNT):
             additionalInformationOnDrug.AdditionalInformationOnDrugCoded = "7"
             additionalInformationOnDrugs.Add(additionalInformationOnDrug)
             drug_information.AdditionalInformationOnDrugs = additionalInformationOnDrugs
-            drug_information.AdditionalInformationOnDrug = data_ury.get('Accion tomada', '')
+            
+            # Combinar Accion tomada y Alerta
+            info_adicional = []
+            if accion_tomada:
+                info_adicional.append(accion_tomada)
+            if alerta_text:
+                info_adicional.append(f"Alerta: {alerta_text}")
+            
+            drug_information.AdditionalInformationOnDrug = " | ".join(info_adicional)
             
             return drug_information
 
@@ -454,11 +469,13 @@ for batch_index in range(BATCH_COUNT):
             who_drug_id=who_drug_id,
             dossage_text=dosage_text,
             pharmaceutical_dose_form=pharmaceutical_dose_form,
-            characterisation_role="1"
+            characterisation_role="1",
+            accion_tomada=data_ury.get('Accion tomada', ''),
+            alerta_text=data_ury.get('Alerta_erroneo', '')
         )
 
         drug_informations.Add(drug_erroneo)
-        print(f"Medicamento erroneo agregado: {drug_name}")
+        print(f"Medicamento erroneo agregado: {drug_name} - WHO Drug ID: {who_drug_id}")
 
         drug_id = generate_guid()  # Genera un GUID único para cada medicamento
         drug_name = data_ury['Marca comercial correcto']
@@ -475,11 +492,13 @@ for batch_index in range(BATCH_COUNT):
             who_drug_id=who_drug_id,
             dossage_text=dosage_text,
             pharmaceutical_dose_form=pharmaceutical_dose_form,
-            characterisation_role="4"
+            characterisation_role="4",
+            accion_tomada=data_ury.get('Accion tomada', ''),
+            alerta_text=data_ury.get('Alerta_correcto', '')
         )
         
         drug_informations.Add(drug_correcto)
-        print(f"Medicamento correcto agregado: {drug_name}")
+        print(f"Medicamento correcto agregado: {drug_name} - WHO Drug ID: {who_drug_id}")
 
         
 

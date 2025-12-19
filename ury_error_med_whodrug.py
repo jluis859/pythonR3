@@ -68,6 +68,9 @@ def procesar_mapeo_whodrug():
         else:
             df_mapeo.at[index, 'comentarios'] = 'No se encontró MPID'
 
+    # Convertir mpid a tipo entero nullable para eliminar decimales
+    df_mapeo['mpid'] = pd.to_numeric(df_mapeo['mpid'], errors='coerce').astype('Int64')
+
     df_encontrados = df_mapeo[df_mapeo['comentarios'] != 'No se encontró MPID'].copy()
     df_no_encontrados = df_mapeo[df_mapeo['comentarios'] == 'No se encontró MPID'].copy()
     df_encontrados.sort_values(by='Original', inplace=True)
@@ -117,6 +120,9 @@ def procesar_mapeo_whodrug():
             df_errores.at[index, 'mpid erroneo'] = mpid_e
         comentarios_erroneo.append(com_e)
         alertas_erroneo.append(alerta_e)
+
+    df_errores['mpid correcto'] = df_errores['mpid correcto'].astype('Int64')
+    df_errores['mpid erroneo'] = df_errores['mpid erroneo'].astype('Int64')
 
     # Añadir las nuevas columnas al final
     df_errores['Comentario_correcto'] = comentarios_correcto
